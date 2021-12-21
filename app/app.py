@@ -49,13 +49,11 @@ login_form = """<html>
 @app.route("/", methods=['POST','GET','HEAD','PUT','DELETE'])
 def homepage(hostname="NA"):
     for header in request.headers:
-        print(header)
         for field in header:
             if "${" in field:
                 reportHit(request)
     if request.method == 'POST':
         for fieldname, value in request.form.items():
-            print(value)
             if "${" in value:
                 reportHit(request)
         return(login_form)
