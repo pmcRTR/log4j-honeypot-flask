@@ -33,7 +33,7 @@ def reportHit(request):
     for fieldname, value in request.form.items():
         msgDict.update({fieldname: value})
     jsonData = json.dumps(msgDict)
-    with open('log.json', 'a') as log:
+    with open('/home/admin/log4j-honeypot-flask/app/log.json', 'a') as log:
         log.write(jsonData + '\n')
 
 login_form = """<html>
