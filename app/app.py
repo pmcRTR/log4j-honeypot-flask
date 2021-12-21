@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, request
 import requests, urllib.request
 import json
 import os
+from datetime import datetime
 
 #### Set the name of this honeypot instance here, or in environment variable HONEYPOT_NAME ####
 # (use a descriptive name so you know when alerts come in where they were triggered)
@@ -26,6 +27,8 @@ app = Flask(__name__)
 
 def reportHit(request):
     msgDict = {}
+    UTCTIME = str(datetime.utcnow()).rsplit('.')[0].replace(' ', '-').split('-')
+    msgDict.update({"timestamp": UTCTIME[2] + "-" + UTCTIME[1] + "-" + UTCTIME[0] + ":" + UTCTIME[3]})
     msgDict.update({"honeypot_name": honeypot_name})
     msgDict.update({"remote_addr": request.remote_addr})
     for header in request.headers:
