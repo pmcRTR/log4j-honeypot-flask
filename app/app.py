@@ -25,29 +25,22 @@ if "HONEYPOT_PORT" in os.environ and os.environ["HONEYPOT_PORT"].strip() != "":
 app = Flask(__name__)
 
 def reportHit(request):
-    msglines = []
-    msglines.append('{"honeypot": "' + honeypot_name + '", "attacker_ip": "' + request.remote_addr + '"')
+    msgDict = {}
+    msgDict.update({"honeypot_name": honeypot_name})
+    msgDict.update({"remote_addr": request.remote_addr})
     for header in request.headers:
-        msglines.append(str(header))
+        msgDict.update({str(header[0]): str(header[1])})
     for fieldname, value in request.form.items():
-        msglines.append(str((fieldname, value)))
-    msg = {'text':'\n '.join(msglines)}
-    jsonlines = json.dumps(msg)
-    print(jsonlines)
-
-#    response = requests.post(
-#        webhook_url, data=json.dumps(msg),
-#        headers={'Content-Type': 'application/json'},
-#        proxies=urllib.request.getproxies(),
-#    )
-#    if response.status_code != 200:
-#        print('Request to webhook returned an error %s, the response is:\n%s' % (response.status_code, response.text))
+        msgDict.update({fieldname: value})
+    jsonData = json.dumps(msgDict)
+    with open('log.json', 'a') as log:
+        log.write(jsonData + '\n')
 
 login_form = """<html>
 <head><title>Transaction</title></head>
 <body>
 <form method='post' action='/'>
-  <input name='transaction' type='text' placeholder='transaction'/>
+  <input name='submitted_string' type='text' placeholder='transaction'/>
   <input type='submit' name='submit' value='Send'/>
 </form>
 </body></html>"""
